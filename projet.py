@@ -3,6 +3,7 @@ import csv
 from math import sqrt
 
 #_______________________________________________________________________________________________________________________
+# http://dataaspirant.com/2015/05/25/collaborative-filtering-recommendation-engine-implementation-in-python/
 train_path = "train.csv"
 
 file_train = csv.reader(open(train_path,"rb"))
