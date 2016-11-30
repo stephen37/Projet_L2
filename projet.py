@@ -6,18 +6,20 @@ from math import sqrt
 # http://dataaspirant.com/2015/05/25/collaborative-filtering-recommendation-engine-implementation-in-python/
 train_path = "MovieLens_train.solution"
 
-file_train = csv.reader(open(train_path,"rb"))
-dataset = {}
-for row in file_train:
-    splited_row = row[0].split(" ")
-    userID = splited_row[0]
-    rates = {}
-    for rate in splited_row[1:]:
-        rate = rate.split(":")
-        if len(rate)>1:
-            rates[rate[0]] = float(rate[1])
+def loadTrainData(train_path) : 
+	file_train = csv.reader(open(train_path,"rb"))
+	dataset = {}
+	for row in file_train:
+		splited_row = row[0].split(" ")
+		userID = splited_row[0]
+		rates = {}
+		for rate in splited_row[1:]:
+			rate = rate.split(":")
+			if len(rate)>1:
+				rates[rate[0]] = float(rate[1])
 
-    dataset[userID] = rates
+		dataset[userID] = rates
+		
 
 
 
@@ -146,7 +148,7 @@ def makeSubmissionFile(predictionFile, usersBase) :
         for val in rec[0:mini]  :
     		fsol.write(" "+val)
 
-makeSubmissionFile("FC.predict", "MovieLens_valid.data")
+#makeSubmissionFile("FC.predict", "MovieLens_valid.data")
 
 #for user in dataset:
 #    print "User: ", user
