@@ -4,20 +4,22 @@ from math import sqrt
 
 #_______________________________________________________________________________________________________________________
 # http://dataaspirant.com/2015/05/25/collaborative-filtering-recommendation-engine-implementation-in-python/
-train_path = "train.csv"
+train_path = "MovieLens_train.solution"
 
-file_train = csv.reader(open(train_path,"rb"))
-dataset = {}
-for row in file_train:
-    splited_row = row[0].split(" ")
-    userID = splited_row[0]
-    rates = {}
-    for rate in splited_row[1:]:
-        rate = rate.split(":")
-        if len(rate)>1:
-            rates[rate[0]] = float(rate[1])
+def loadTrainData(train_path) : 
+	file_train = csv.reader(open(train_path,"rb"))
+	dataset = {}
+	for row in file_train:
+		splited_row = row[0].split(" ")
+		userID = splited_row[0]
+		rates = {}
+		for rate in splited_row[1:]:
+			rate = rate.split(":")
+			if len(rate)>1:
+				rates[rate[0]] = float(rate[1])
 
-    dataset[userID] = rates
+		dataset[userID] = rates
+		
 
 
 
@@ -131,10 +133,27 @@ def user_reommendations(person):
 #         print "Pearson Correlation: ", pearson_correlation(user1, user2)
 #         print " "
 
-for user in dataset:
-    print "User: ", user
-    print "Recommendations: ", user_reommendations(user)
-    print
+def makeSubmissionFile(predictionFile, usersBase) : 
+    fsol = open(predictionFile, "w")
+    users = open(usersBase, "r")
+    firstLine=1
+    for user in users : 
+        if (firstLine == 1):
+    		fsol.write(str(int(user)))
+    		firstLine = 0
+        else:
+    		fsol.write("\n" + str(int(user)))
+        rec = user_reommendations(str(int(user)))
+        mini =min ([100, len(rec)])
+        for val in rec[0:mini]  :
+    		fsol.write(" "+val)
+
+#makeSubmissionFile("FC.predict", "MovieLens_valid.data")
+
+#for user in dataset:
+#    print "User: ", user
+#    print "Recommendations: ", user_reommendations(user)
+#    print
 
 #_______________________________________________________________________________________________________________________
     # f = open("ml-1m/ratings.dat", "r")
