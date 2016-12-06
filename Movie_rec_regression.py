@@ -167,7 +167,7 @@ def construct_data_set(path_movies, path_ratings, path_users, nb_samples, taux_t
 
 
 # ________________a executer une seule fois_______________________
-construct_data_set(path_movies="ml-1m/movies.dat", path_ratings="ml-1m/ratings.dat",path_users="ml-1m/users.dat",nb_samples = 100000, taux_test=0.2)
+#construct_data_set(path_movies="ml-1m/movies.dat", path_ratings="ml-1m/ratings.dat",path_users="ml-1m/users.dat",nb_samples = 100000, taux_test=0.2)
 #_________________________________________________________________
 
 global_train_set = pickle.load(open( "global_train_set.p", "rb" ))
@@ -181,24 +181,36 @@ test_samples = []
 test_targets = []
 
 
+
+fich_dataset = open("dataset_name.data", "w")
+fich_datasol = open("dataset_name.solution", "w")
+
 for sample in global_train_set:
     train_samples.append(sample[:len(sample)-1])
-    train_targets.append(sample[len(sample)-1])
-
-for sample in global_test_set:
-    test_samples.append(sample[:len(sample)-1])
-    test_targets.append(sample[len(sample)-1])
-
-
-from sklearn.neural_network import MLPClassifier
-
-clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(50, 50, 50), random_state=1)
-clf.fit(train_samples, train_targets)
-
-predictions = clf.predict(test_samples)
+    sample_i = '\t'.join(str(e) for e in sample[:len(sample)-1]) + "\n"
+    fich_dataset.write(sample_i)
+    target_i = sample[len(sample)-1]
+    train_targets.append(target_i)
+    fich_datasol.write(str(target_i)+'\n')
 
 
-from sklearn.metrics import mean_squared_error
-print mean_squared_error(test_targets, list(predictions))**0.5
+# for sample in global_test_set:
+#     test_samples.append(sample[:len(sample)-1])
+#     test_targets.append(sample[len(sample)-1])
+#
+#
+#
+#
+#
+# from sklearn.neural_network import MLPClassifier
+#
+# clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(50, 50, 50), random_state=1)
+# clf.fit(train_samples, train_targets)
+#
+# predictions = clf.predict(test_samples)
+#
+#
+# from sklearn.metrics import mean_squared_error
+# print mean_squared_error(test_targets, list(predictions))**0.5
 
 
