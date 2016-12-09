@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pickle
 
-def construct_data_set(path_movies, path_ratings, path_users, nb_samples, taux_test):
+def construct_data_set(path_movies, path_ratings, path_users, nb_samples, taux_test, taux_val):
     f_movies = open(path_movies, "r")  #MovieID::Title::Genres
     f_ratings = open(path_ratings, "r")  #UserID::MovieID::Rating::Timestamp
     f_users = open(path_users, "r") #UserID::Gender::Age::Occupation::Zip-code
@@ -152,26 +152,35 @@ def construct_data_set(path_movies, path_ratings, path_users, nb_samples, taux_t
 
     import random
     test_set_ind = random.sample(range(0, nb_samples-1),  int(taux_test*nb_samples))
+    val_set_ind = random.sample(range(0, nb_samples-1),  int(taux_val*nb_samples))
+
 
 
     global_test_set = []
     global_train_set = []
+    global_val_set = []
     for i in range(0, nb_samples):
         if i in test_set_ind:
             global_test_set.append(global_samples_set[i])
         else:
             global_train_set.append(global_samples_set[i])
 
+        if i in val_set_ind:
+            global_val_set.append(global_samples_set[i])
+
+
     pickle.dump(global_test_set, open( "global_test_set.p", "wb" ))
     pickle.dump(global_train_set, open( "global_train_set.p", "wb" ))
+    pickle.dump(global_val_set, open( "global_val_set.p", "wb" ))
 
 
 # ________________a executer une seule fois_______________________
-#construct_data_set(path_movies="ml-1m/movies.dat", path_ratings="ml-1m/ratings.dat",path_users="ml-1m/users.dat",nb_samples = 100000, taux_test=0.2)
+#construct_data_set(path_movies="ml-1m/movies.dat", path_ratings="ml-1m/ratings.dat",path_users="ml-1m/users.dat",nb_samples = 150000, taux_test=0.2, taux_val=0.1)
 #_________________________________________________________________
 
 global_train_set = pickle.load(open( "global_train_set.p", "rb" ))
 global_test_set = pickle.load(open( "global_test_set.p", "rb" ))
+global_val_set = pickle.load(open( "global_val_set.p", "rb" ))
 
 
 train_samples = []
@@ -180,10 +189,11 @@ train_targets = []
 test_samples = []
 test_targets = []
 
+val_samples = []
+val_targets = []
 
-
-fich_dataset = open("dataset_name.data", "w")
-fich_datasol = open("dataset_name.solution", "w")
+fich_dataset = open("movierec_train.data", "w")
+fich_datasol = open("movierec_train.solution", "w")
 
 for sample in global_train_set:
     train_samples.append(sample[:len(sample)-1])
@@ -193,15 +203,28 @@ for sample in global_train_set:
     train_targets.append(target_i)
     fich_datasol.write(str(target_i)+'\n')
 
+fich_dataset_test = open("movierec_test.data", "w")
+fich_datasol_test = open("movierec_test.solution", "w")
+for sample in global_test_set:
+    test_samples.append(sample[:len(sample)-1])
+    sample_i = '\t'.join(str(e) for e in sample[:len(sample) - 1]) + "\n"
+    fich_dataset_test.write(sample_i)
+    target_i = sample[len(sample) - 1]
+    test_targets.append(target_i)
+    fich_datasol_test.write(str(target_i)+'\n')
 
-# for sample in global_test_set:
-#     test_samples.append(sample[:len(sample)-1])
-#     test_targets.append(sample[len(sample)-1])
-#
-#
-#
-#
-#
+
+fich_dataset_val = open("movierec_valid.data", "w")
+fich_datasol_val = open("movierec_valid.solution", "w")
+for sample in global_val_set:
+    val_samples.append(sample[:len(sample)-1])
+    sample_i = '\t'.join(str(e) for e in sample[:len(sample) - 1]) + "\n"
+    fich_dataset_val.write(sample_i)
+    target_i = sample[len(sample) - 1]
+    val_targets.append(target_i)
+    fich_datasol_val.write(str(target_i)+'\n')
+
+
 # from sklearn.neural_network import MLPClassifier
 #
 # clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(50, 50, 50), random_state=1)
@@ -212,5 +235,10 @@ for sample in global_train_set:
 #
 # from sklearn.metrics import mean_squared_error
 # print mean_squared_error(test_targets, list(predictions))**0.5
-
-
+#
+#
+# fich_pred = open("predictions.data", "w")
+#
+# for pred in predictions:
+#     fich_pred.write(str(pred)+'\n')
+#
